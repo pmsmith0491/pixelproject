@@ -1,0 +1,3 @@
+Resolution X: 144
+Resolution Y:  81
+Box Size: 1

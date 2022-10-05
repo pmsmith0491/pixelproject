@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 3278496332257226138}
   - component: {fileID: 1932137277850640959}
   - component: {fileID: 4410330082900645621}
-  - component: {fileID: 3927433580794531838}
   m_Layer: 0
   m_Name: grass
   m_TagString: Untagged
@@ -82,21 +81,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &3927433580794531838
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2752930446771533600}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15f2cae7a75dc1d479c03956c57c10a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SnapPosition: 1
-  SnapEulerAngles: 1
-  SnapAngleStrategy: 0
-  angleResolution: 30
-  AlignPixelGrid: 1
-  PixelGridReference: {fileID: 0}

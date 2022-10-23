@@ -1,12 +1,10 @@
 // This shader draws a texture on the mesh.
-Shader "Custom/SimplePixelation"
+Shader "Custom/CleanCamera"
 {
     Properties
     {
-        _MainTex("Base Map", 2D) = "white"
-        _ResolutionX("ResolutionX", float) = 512
-        _ResolutionY("ResolutionY", float) = 288
-        _BoxSize("Box Size", float) = 8   // we want our box size to be ResolutionX / (AspectRatioX * AspectRatioY)
+        _MainTex("_MainTex", 2D) = "white"
+        _CleanTex("_CleanTex", 2D) = "white"
     }
 
         SubShader
@@ -39,19 +37,18 @@ Shader "Custom/SimplePixelation"
             };
 
             // This macro declares _BaseMap as a Texture2D object.
-            TEXTURE2D(_MainTex);
+            TEXTURE2D(_CleanTex);
+            
             // This macro declares the sampler for the _BaseMap texture.
             SAMPLER(sampler_MainTex);
+            SAMPLER(sampler_CleanTex);
 
             CBUFFER_START(UnityPerMaterial)
                 // The following line declares the _BaseMap_ST variable, so that you
                 // can use the _BaseMap variable in the fragment shader. The _ST 
                 // suffix is necessary for the tiling and offset function to work.
                 float4 _MainTex_ST;
-                float _ResolutionX;
-                float _ResolutionY;
-                float _BoxSize;
-
+                float4 _CleanTex_ST;
             CBUFFER_END
 
             Varyings vert(Attributes IN)
@@ -66,24 +63,7 @@ Shader "Custom/SimplePixelation"
 
             half4 frag(Varyings IN) : SV_Target
             {
-
-
-                float pixelSizeX = 1 / _ResolutionX;// size of pixel on x axis in normalized space
-                float pixelSizeY = 1 / _ResolutionY;// size of pixel on y axis in normalized space
-                float CellSizeX = _BoxSize * pixelSizeX; // "Upscaled" pixel x size in normalized space 
-                float CellSizeY = _BoxSize * pixelSizeY; // "Upscaled" pixel y size in normalized space
-                float bottomLeftPixelOfCellX = CellSizeX * floor(IN.uv.x / CellSizeX); // u coordinate of pixel at bottom most leftmost part of square
-                float bottomLeftPixelOfCellY = CellSizeY * floor(IN.uv.y / CellSizeY); // v coordinate of pixel at bottom most leftmost part of square
-                float2 middlePixel = float2(bottomLeftPixelOfCellX + (CellSizeX * 0.5), bottomLeftPixelOfCellY + (CellSizeY * 0.5));
-
-                //float2 bottomLeftPixelOfCell = float2(bottomLeftPixelOfCellX, bottomLeftPixelOfCellY);
-
-                // The SAMPLE_TEXTURE2D marco samples the texture with the given
-                // sampler.
-                
-
-                half4 color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, middlePixel);
-                // Test to see if transparency is turned on (makes every other pixel transparent) color.a = (IN.positionHCS.x + IN.positionHCS.y) % 2;
+                half4 color = SAMPLE_TEXTURE2D(_CleanTex, sampler_CleanTex, IN.uv);
                 return color;
             }
             ENDHLSL

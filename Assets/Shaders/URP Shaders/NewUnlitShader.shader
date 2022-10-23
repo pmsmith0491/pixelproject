@@ -2,8 +2,7 @@ Shader "Custom/NewUnlitShader"
 {
     Properties
     {
-        [MainColor] _BaseColor("BaseColor", Color) = (1,1,1,1)
-        [MainTexture] _BaseMap("BaseMap", 2D) = "white" {}
+        _MainTex("BaseMap", 2D) = "white" {}
         _PixelSize("PixelSize", Float) = 5
     }
 
@@ -39,11 +38,11 @@ Shader "Custom/NewUnlitShader"
                 float4 positionHCS  : SV_POSITION;
             };
 
-            TEXTURE2D(_BaseMap);
-            SAMPLER(sampler_BaseMap);
+            TEXTURE2D(_MainTex);
+            SAMPLER(sampler_MainTex);
 
             CBUFFER_START(UnityPerMaterial)
-            float4 _BaseMap_ST;
+            float4 _MainTex_ST;
             half4 _BaseColor;
             half _PixelSize;
             CBUFFER_END
@@ -52,7 +51,7 @@ Shader "Custom/NewUnlitShader"
             {
                 Varyings OUT;
                 OUT.positionHCS = TransformObjectToHClip(IN.positionOS.xyz);
-                OUT.uv = TRANSFORM_TEX(IN.uv, _BaseMap);
+                OUT.uv = TRANSFORM_TEX(IN.uv, _MainTex);
                 return OUT;
             }
 
@@ -105,8 +104,8 @@ Shader "Custom/NewUnlitShader"
             //      returns opaque pixel otherwise. 
             half4 frag(Varyings IN) : SV_Target
             {
-                half4 color = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv) * _BaseColor;
-                color.a = pixel_transparent(color, IN.positionHCS.x, IN.positionHCS.y);
+                half4 color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
+                color.a = color.a = (IN.positionHCS.x + IN.positionHCS.y) % 2;
                 return color;                
             }
             ENDHLSL

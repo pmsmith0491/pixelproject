@@ -1,21 +1,16 @@
-// This shader draws a texture on the mesh.
-Shader "Custom/SimplePixelation"
+Shader "Custom/RemoveBackgroundColor"
 {
     Properties
     {
-        _MainTex("Base Map", 2D) = "white"
-        _ResolutionX("ResolutionX", float) = 512
-        _ResolutionY("ResolutionY", float) = 288
-        _BoxSize("Box Size", float) = 8   // we want our box size to be ResolutionX / (AspectRatioX * AspectRatioY)
+        _MainTex ("Texture", 2D) = "white" {}
+        _Color("Color", Color) = (1, 0, 1, 1)
     }
-
-        SubShader
+    SubShader
     {
         Tags {"Queue" = "Transparent" "RenderType" = "Transparent" "RenderPipeline" = "UniversalRenderPipeline"}
         Blend SrcAlpha OneMinusSrcAlpha
 
-        Pass
-        {
+        Pass {
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -48,9 +43,7 @@ Shader "Custom/SimplePixelation"
                 // can use the _BaseMap variable in the fragment shader. The _ST 
                 // suffix is necessary for the tiling and offset function to work.
                 float4 _MainTex_ST;
-                float _ResolutionX;
-                float _ResolutionY;
-                float _BoxSize;
+                float4 _Color;
 
             CBUFFER_END
 
@@ -67,21 +60,11 @@ Shader "Custom/SimplePixelation"
             half4 frag(Varyings IN) : SV_Target
             {
 
+                half4 color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
+                if (color.r == _Color.r && color.g == _Color.g && color.b == _Color.b) {
+                    color.a = 0.0f;
+                }
 
-                float pixelSizeX = 1 / _ResolutionX;// size of pixel on x axis in normalized space
-                float pixelSizeY = 1 / _ResolutionY;// size of pixel on y axis in normalized space
-                float CellSizeX = _BoxSize * pixelSizeX; // "Upscaled" pixel x size in normalized space 
-                float CellSizeY = _BoxSize * pixelSizeY; // "Upscaled" pixel y size in normalized space
-                float bottomLeftPixelOfCellX = CellSizeX * floor(IN.uv.x / CellSizeX); // u coordinate of pixel at bottom most leftmost part of square
-                float bottomLeftPixelOfCellY = CellSizeY * floor(IN.uv.y / CellSizeY); // v coordinate of pixel at bottom most leftmost part of square
-                float2 middlePixel = float2(bottomLeftPixelOfCellX + (CellSizeX * 0.5), bottomLeftPixelOfCellY + (CellSizeY * 0.5));
-
-                //float2 bottomLeftPixelOfCell = float2(bottomLeftPixelOfCellX, bottomLeftPixelOfCellY);
-
-                // The SAMPLE_TEXTURE2D marco samples the texture with the given
-                // sampler.
-                half4 color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, middlePixel);
-   
                 return color;
             }
             ENDHLSL

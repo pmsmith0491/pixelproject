@@ -9,8 +9,7 @@ Shader "Custom/OverlayPixelCam"
 
             SubShader
         {
-            Tags {"Queue" = "Transparent" "RenderType" = "Transparent" "RenderPipeline" = "UniversalRenderPipeline"}
-            Blend SrcAlpha OneMinusSrcAlpha
+            Tags {"RenderType" = "Opaque" "RenderPipeline" = "UniversalRenderPipeline"}
 
             Pass
             {
@@ -68,7 +67,7 @@ Shader "Custom/OverlayPixelCam"
                     half4 colorPixel = SAMPLE_TEXTURE2D(_PixelTexture, sampler_PixelTexture, IN.uv);
                     half4 color = colorPixel;
 
-                    if (color.a == 0.0f) {
+                    if (color.a < 1.0f) {
                         color = colorClean;
                     }
 

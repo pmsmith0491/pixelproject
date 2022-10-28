@@ -61,8 +61,8 @@ Shader "Custom/RemoveBackgroundColor"
             {
 
                 half4 color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
-                if (color.r == _Color.r && color.g == _Color.g && color.b == _Color.b) {
-                    color.a = 0.0f;
+                if (color.a < 1.0f) {
+                    color = half4(1.0f, 0.0f, 1.0f, 1.0f);
                 }
 
                 return color;

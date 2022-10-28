@@ -11,8 +11,8 @@ Shader "Custom/SimplePixelation"
 
         SubShader
     {
-        Tags {"Queue" = "Transparent" "RenderType" = "Transparent" "RenderPipeline" = "UniversalRenderPipeline"}
-        Blend SrcAlpha OneMinusSrcAlpha
+        Tags {"RenderType" = "Opaque" "RenderPipeline" = "UniversalRenderPipeline"}
+       // Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
         {

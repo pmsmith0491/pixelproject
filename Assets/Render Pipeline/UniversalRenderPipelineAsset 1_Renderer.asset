@@ -31,10 +31,9 @@ MonoBehaviour:
   m_Name: UniversalRenderPipelineAsset 1_Renderer
   m_EditorClassIdentifier: 
   m_RendererFeatures:
-  - {fileID: 6115368012104386271}
   - {fileID: 7741500850205832366}
   - {fileID: -8339523687538378369}
-  m_RendererFeatureMap: dfc64470ce26de54ae34e7cc01566f6b7fb95110640f448c
+  m_RendererFeatureMap: ae34e7cc01566f6b7fb95110640f448c
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
   shaders:
@@ -63,24 +62,6 @@ MonoBehaviour:
   m_ShadowTransparentReceive: 1
   m_RenderingMode: 0
   m_AccurateGbufferNormals: 0
---- !u!114 &6115368012104386271
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71616080c7e86c34faf297d31b4eda28, type: 3}
-  m_Name: RemoveBackgroundColor
-  m_EditorClassIdentifier: 
-  m_Active: 1
-  settings:
-    IsEnabled: 1
-    WhenToInsert: 500
-    MaterialToBlit: {fileID: 2100000, guid: 4bf1a0dc834c9074aa5344a46eea6743, type: 2}
-    cameraTag: PixelCamera
 --- !u!114 &7741500850205832366
 MonoBehaviour:
   m_ObjectHideFlags: 0

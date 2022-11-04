@@ -11,7 +11,10 @@ public class RenderTextureManager : MonoBehaviour
      */
 
     [SerializeField] private Material materialToSet;
+    [SerializeField] private Material pixelPostProcess;
+    [SerializeField] private Transform pixelationTarget; // Transform of object to be pixelated to keep track of individual object in coordinate space
     [SerializeField] private string texName;
+    [SerializeField] private string pixelShaderTargetField;
 
     private void Awake()
     {
@@ -19,9 +22,23 @@ public class RenderTextureManager : MonoBehaviour
         Debug.Assert(tex.Create(), "failed to create render texture for camera");
 
         Camera cam = GetComponent<Camera>(); // the pixel camera
-
+        Vector3 viewportPosition = cam.WorldToViewportPoint(pixelationTarget.position);
+        
         cam.targetTexture = tex;
-        materialToSet.SetTexture(texName, tex);
-       
+        materialToSet.SetTexture(texName, tex);     
     }
+
+    private void FixedUpdate()
+    {
+        SetTargetPosInPixelPostProcess();
+    }
+
+    private void SetTargetPosInPixelPostProcess()
+    {
+        Camera cam = GetComponent<Camera>(); // the pixel camera
+        Vector3 viewportPosition = cam.WorldToViewportPoint(pixelationTarget.position);
+        Vector4 viewportPositionAsVec4 = new Vector4(viewportPosition.x, viewportPosition.y, viewportPosition.z, 0);
+        pixelPostProcess.SetVector(pixelShaderTargetField, viewportPositionAsVec4);
+    }
+
 }

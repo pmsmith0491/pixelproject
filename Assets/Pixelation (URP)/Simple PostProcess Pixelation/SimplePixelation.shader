@@ -7,6 +7,7 @@ Shader "Custom/SimplePixelation"
         _ResolutionX("ResolutionX", float) = 512
         _ResolutionY("ResolutionY", float) = 288
         _BoxSize("Box Size", float) = 8   // we want our box size to be ResolutionX / (AspectRatioX * AspectRatioY)
+        _PixelationTargetPos("_PixelationTargetPos", Vector) = (0, 0, 0, 0)
     }
 
         SubShader
@@ -51,6 +52,7 @@ Shader "Custom/SimplePixelation"
                 float _ResolutionX;
                 float _ResolutionY;
                 float _BoxSize;
+                float4 _PixelationTargetPos;
 
             CBUFFER_END
 
@@ -70,17 +72,20 @@ Shader "Custom/SimplePixelation"
 
                 float pixelSizeX = 1 / _ResolutionX;// size of pixel on x axis in normalized space
                 float pixelSizeY = 1 / _ResolutionY;// size of pixel on y axis in normalized space
-                float CellSizeX = _BoxSize * pixelSizeX; // "Upscaled" pixel x size in normalized space 
-                float CellSizeY = _BoxSize * pixelSizeY; // "Upscaled" pixel y size in normalized space
+                float CellSizeX = (_BoxSize * pixelSizeX); // "Upscaled" pixel x size in normalized space 
+                float CellSizeY = (_BoxSize * pixelSizeY); // "Upscaled" pixel y size in normalized space
                 float bottomLeftPixelOfCellX = CellSizeX * floor(IN.uv.x / CellSizeX); // u coordinate of pixel at bottom most leftmost part of square
                 float bottomLeftPixelOfCellY = CellSizeY * floor(IN.uv.y / CellSizeY); // v coordinate of pixel at bottom most leftmost part of square
-                float2 middlePixel = float2(bottomLeftPixelOfCellX + (CellSizeX * 0.5), bottomLeftPixelOfCellY + (CellSizeY * 0.5));
+                float offsetFromTargetX = _PixelationTargetPos.x - bottomLeftPixelOfCellX;
+                float offsetFromTargetY = _PixelationTargetPos.y - bottomLeftPixelOfCellY;
+                // middlePixel = float2((bottomLeftPixelOfCellX + (CellSizeX * 0.5)) + offsetFromTargetX, (bottomLeftPixelOfCellY + (CellSizeY * 0.5)) + offsetFromTargetY);
 
-                //float2 bottomLeftPixelOfCell = float2(bottomLeftPixelOfCellX, bottomLeftPixelOfCellY);
+                float2 bottomLeftPixelOfCell = float2(bottomLeftPixelOfCellX + (CellSizeX * offsetFromTargetX), bottomLeftPixelOfCellY + (CellSizeY * offsetFromTargetY));
+                //bottomLeftPixelOfCell = float2(bottomLeftPixelOfCellX, bottomLeftPixelOfCellY);
 
                 // The SAMPLE_TEXTURE2D marco samples the texture with the given
                 // sampler.
-                half4 color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, middlePixel);
+                half4 color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, bottomLeftPixelOfCell);
    
                 return color;
             }

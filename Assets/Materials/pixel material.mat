@@ -144,7 +144,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 0.5}
     - _PixelGridOrigin: {r: 0, g: 0, b: 0, a: 0}
-    - _PixelationTargetPos: {r: 0.7388337, g: 0.44881964, b: 1.6129078, a: 0}
+    - _PixelationTargetPos: {r: 0.6561983, g: 0.17953008, b: 1.1834521, a: 0}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &6548007537257514885

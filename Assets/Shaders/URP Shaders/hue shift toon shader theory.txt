@@ -1,0 +1,8 @@
+Toon shader idea:
+
+Instead of darkening the color when light hits it different ways, shift the hue. 
+
+Shift the hue to yellow when normals hit direct
+
+Shift the hue to purple when normals hit indirect 
+

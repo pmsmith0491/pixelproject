@@ -101,7 +101,7 @@ Material:
     - USE_OBJECT_POSITION: 1
     - _AlphaClip: 0
     - _Blend: 0
-    - _BoxSize: 16
+    - _BoxSize: 18
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
@@ -144,7 +144,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 0.5}
     - _PixelGridOrigin: {r: 0, g: 0, b: 0, a: 0}
-    - _PixelationTargetPos: {r: 0.46733475, g: 0.24527302, b: 1.2885413, a: 0}
+    - _PixelationTargetPos: {r: 0.7388337, g: 0.44881964, b: 1.6129078, a: 0}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &6548007537257514885

@@ -37,8 +37,19 @@ public class RenderTextureManager : MonoBehaviour
     {
         Camera cam = GetComponent<Camera>(); // the pixel camera
         Vector3 viewportPosition = cam.WorldToViewportPoint(pixelationTarget.position);
+        SnapTargetToPixelGrid(viewportPosition, cam);
         Vector4 viewportPositionAsVec4 = new Vector4(viewportPosition.x, viewportPosition.y, viewportPosition.z, 0);
         pixelPostProcess.SetVector(pixelShaderTargetField, viewportPositionAsVec4);
+    }
+
+    private void SnapTargetToPixelGrid(Vector3 targetViewportPos, Camera cam)
+    {
+        float pixelSizeX = 1 / Screen.width;
+        float pixelSizeY = 1 / Screen.height;
+        float snappedPosX = Mathf.Floor(targetViewportPos.x * Screen.width)/Screen.width;
+        float snappedPosY = Mathf.Floor(targetViewportPos.y * Screen.height) / Screen.height;
+        Vector3 snappedPos = new Vector3(snappedPosX, snappedPosY, targetViewportPos.z);
+        pixelationTarget.position = cam.ViewportToWorldPoint(snappedPos);
     }
 
 }

@@ -76,12 +76,13 @@ Shader "Custom/SimplePixelation"
                 float CellSizeY = (_BoxSize * pixelSizeY); // "Upscaled" pixel y size in normalized space
                 float bottomLeftPixelOfCellX = CellSizeX * floor(IN.uv.x / CellSizeX); // u coordinate of pixel at bottom most leftmost part of square
                 float bottomLeftPixelOfCellY = CellSizeY * floor(IN.uv.y / CellSizeY); // v coordinate of pixel at bottom most leftmost part of square
-                float offsetFromTargetX = _PixelationTargetPos.x - bottomLeftPixelOfCellX;
-                float offsetFromTargetY = _PixelationTargetPos.y - bottomLeftPixelOfCellY;
                 // middlePixel = float2((bottomLeftPixelOfCellX + (CellSizeX * 0.5)) + offsetFromTargetX, (bottomLeftPixelOfCellY + (CellSizeY * 0.5)) + offsetFromTargetY);
 
-                float2 bottomLeftPixelOfCell = float2(bottomLeftPixelOfCellX + (CellSizeX * offsetFromTargetX), bottomLeftPixelOfCellY + (CellSizeY * offsetFromTargetY));
-                //bottomLeftPixelOfCell = float2(bottomLeftPixelOfCellX, bottomLeftPixelOfCellY);
+                float2 bottomLeftPixelOfCell = float2(bottomLeftPixelOfCellX, bottomLeftPixelOfCellY);
+                float2 originPosition = float2(_PixelationTargetPos.x, _PixelationTargetPos.y);
+                float2 bottomLeftOfOriginCell = float2(CellSizeX * floor(originPosition.x / CellSizeX), CellSizeY * floor(originPosition.y/CellSizeY));
+                float2 offset = float2(originPosition.x - bottomLeftOfOriginCell.x, originPosition.y - bottomLeftOfOriginCell.y);
+                bottomLeftPixelOfCell = float2(bottomLeftPixelOfCellX + offset.x, bottomLeftPixelOfCellY + offset.y);
 
                 // The SAMPLE_TEXTURE2D marco samples the texture with the given
                 // sampler.

@@ -9,6 +9,7 @@ Shader "Custom/ToonShaderURP"
 
         [MainColor] _BaseColor("Color", Color) = (0.5,0.5,0.5,1)
         [MainTexture] _BaseMap("Albedo", 2D) = "white" {}
+        _Shades("Shades", Range(1,20)) = 3
 
         _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
 
@@ -55,101 +56,105 @@ Shader "Custom/ToonShaderURP"
             // that can match multiple render pipelines. If a RenderPipeline tag is not set it will match
             // any render pipeline. In case you want your subshader to only run in LWRP set the tag to
             // "UniversalRenderPipeline"
-            Tags{"RenderType" = "Opaque" "RenderPipeline" = "UniversalRenderPipeline" "IgnoreProjector" = "True"}
-            LOD 300
+Tags{ "RenderType" = "Opaque" "RenderPipeline" = "UniversalRenderPipeline" "IgnoreProjector" = "True" }
+LOD 300
 
-            // ------------------------------------------------------------------
-            // Forward pass. Shades GI, emission, fog and all lights in a single pass.
-            // Compared to Builtin pipeline forward renderer, LWRP forward renderer will
-            // render a scene with multiple lights with less drawcalls and less overdraw.
-            Pass
-            {
-                // "Lightmode" tag must be "UniversalForward" or not be defined in order for
-                // to render objects.
-                Name "StandardLit"
-                Tags{"LightMode" = "UniversalForward"}
+// ------------------------------------------------------------------
+// Forward pass. Shades GI, emission, fog and all lights in a single pass.
+// Compared to Builtin pipeline forward renderer, LWRP forward renderer will
+// render a scene with multiple lights with less drawcalls and less overdraw.
+Pass
+{
+    // "Lightmode" tag must be "UniversalForward" or not be defined in order for
+    // to render objects.
+    Name "StandardLit"
+    Tags{"LightMode" = "UniversalForward"}
 
-                Blend[_SrcBlend][_DstBlend]
-                ZWrite[_ZWrite]
-                Cull[_Cull]
+    Blend[_SrcBlend][_DstBlend]
+    ZWrite[_ZWrite]
+    Cull[_Cull]
 
-                HLSLPROGRAM
-            // Required to compile gles 2.0 with standard SRP library
-            // All shaders must be compiled with HLSLcc and currently only gles is not using HLSLcc by default
-            #pragma prefer_hlslcc gles
-            #pragma exclude_renderers d3d11_9x
-            #pragma target 2.0
+    HLSLPROGRAM
+    // Required to compile gles 2.0 with standard SRP library
+    // All shaders must be compiled with HLSLcc and currently only gles is not using HLSLcc by default
+    #pragma prefer_hlslcc gles
+    #pragma exclude_renderers d3d11_9x
+    #pragma target 2.0
 
-            // -------------------------------------
-            // Material Keywords
-            // unused shader_feature variants are stripped from build automatically
-            #pragma shader_feature _NORMALMAP
-            #pragma shader_feature _ALPHATEST_ON
-            #pragma shader_feature _ALPHAPREMULTIPLY_ON
-            #pragma shader_feature _EMISSION
-            #pragma shader_feature _METALLICSPECGLOSSMAP
-            #pragma shader_feature _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
-            #pragma shader_feature _OCCLUSIONMAP
+    // -------------------------------------
+    // Material Keywords
+    // unused shader_feature variants are stripped from build automatically
+    #pragma shader_feature _NORMALMAP
+    #pragma shader_feature _ALPHATEST_ON
+    #pragma shader_feature _ALPHAPREMULTIPLY_ON
+    #pragma shader_feature _EMISSION
+    #pragma shader_feature _METALLICSPECGLOSSMAP
+    #pragma shader_feature _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+    #pragma shader_feature _OCCLUSIONMAP
 
-            #pragma shader_feature _SPECULARHIGHLIGHTS_OFF
-            #pragma shader_feature _GLOSSYREFLECTIONS_OFF
-            #pragma shader_feature _SPECULAR_SETUP
-            #pragma shader_feature _RECEIVE_SHADOWS_OFF
+    #pragma shader_feature _SPECULARHIGHLIGHTS_OFF
+    #pragma shader_feature _GLOSSYREFLECTIONS_OFF
+    #pragma shader_feature _SPECULAR_SETUP
+    #pragma shader_feature _RECEIVE_SHADOWS_OFF
 
-            // -------------------------------------
-            // Universal Render Pipeline keywords
-            // When doing custom shaders you most often want to copy and past these #pragmas
-            // These multi_compile variants are stripped from the build depending on:
-            // 1) Settings in the LWRP Asset assigned in the GraphicsSettings at build time
-            // e.g If you disable AdditionalLights in the asset then all _ADDITIONA_LIGHTS variants
-            // will be stripped from build
-            // 2) Invalid combinations are stripped. e.g variants with _MAIN_LIGHT_SHADOWS_CASCADE
-            // but not _MAIN_LIGHT_SHADOWS are invalid and therefore stripped.
-            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
-            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
-            #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
-            #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
-            #pragma multi_compile _ _SHADOWS_SOFT
-            #pragma multi_compile _ _MIXED_LIGHTING_SUBTRACTIVE
+    // -------------------------------------
+    // Universal Render Pipeline keywords
+    // When doing custom shaders you most often want to copy and past these #pragmas
+    // These multi_compile variants are stripped from the build depending on:
+    // 1) Settings in the LWRP Asset assigned in the GraphicsSettings at build time
+    // e.g If you disable AdditionalLights in the asset then all _ADDITIONA_LIGHTS variants
+    // will be stripped from build
+    // 2) Invalid combinations are stripped. e.g variants with _MAIN_LIGHT_SHADOWS_CASCADE
+    // but not _MAIN_LIGHT_SHADOWS are invalid and therefore stripped.
+    #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
+    #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
+    #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
+    #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
+    #pragma multi_compile _ _SHADOWS_SOFT
+    #pragma multi_compile _ _MIXED_LIGHTING_SUBTRACTIVE
 
-            // -------------------------------------
-            // Unity defined keywords
-            #pragma multi_compile _ DIRLIGHTMAP_COMBINED
-            #pragma multi_compile _ LIGHTMAP_ON
-            #pragma multi_compile_fog
+    // -------------------------------------
+    // Unity defined keywords
+    #pragma multi_compile _ DIRLIGHTMAP_COMBINED
+    #pragma multi_compile _ LIGHTMAP_ON
+    #pragma multi_compile_fog
 
-            //--------------------------------------
-            // GPU Instancing
-            #pragma multi_compile_instancing
+    //--------------------------------------
+    // GPU Instancing
+    #pragma multi_compile_instancing
 
-            #pragma vertex LitPassVertex
-            #pragma fragment LitPassFragment
+    #pragma vertex LitPassVertex
+    #pragma fragment LitPassFragment
 
-            // Including the following two function is enought for shading with Universal Pipeline. Everything is included in them.
-            // Core.hlsl will include SRP shader library, all constant buffers not related to materials (perobject, percamera, perframe).
-            // It also includes matrix/space conversion functions and fog.
-            // Lighting.hlsl will include the light functions/data to abstract light constants. You should use GetMainLight and GetLight functions
-            // that initialize Light struct. Lighting.hlsl also include GI, Light BDRF functions. It also includes Shadows.
+    // Including the following two function is enought for shading with Universal Pipeline. Everything is included in them.
+    // Core.hlsl will include SRP shader library, all constant buffers not related to materials (perobject, percamera, perframe).
+    // It also includes matrix/space conversion functions and fog.
+    // Lighting.hlsl will include the light functions/data to abstract light constants. You should use GetMainLight and GetLight functions
+    // that initialize Light struct. Lighting.hlsl also include GI, Light BDRF functions. It also includes Shadows.
 
-            // Required by all Universal Render Pipeline shaders.
-            // It will include Unity built-in shader variables (except the lighting variables)
-            // (https://docs.unity3d.com/Manual/SL-UnityShaderVariables.html
-            // It will also include many utilitary functions. 
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+    // Required by all Universal Render Pipeline shaders.
+    // It will include Unity built-in shader variables (except the lighting variables)
+    // (https://docs.unity3d.com/Manual/SL-UnityShaderVariables.html
+    // It will also include many utilitary functions. 
+    #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
-            // Include this if you are doing a lit shader. This includes lighting shader variables,
-            // lighting and shadow functions
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+    // Include this if you are doing a lit shader. This includes lighting shader variables,
+    // lighting and shadow functions
+    #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
-            // Material shader variables are not defined in SRP or LWRP shader library.
-            // This means _BaseColor, _BaseMap, _BaseMap_ST, and all variables in the Properties section of a shader
-            // must be defined by the shader itself. If you define all those properties in CBUFFER named
-            // UnityPerMaterial, SRP can cache the material properties between frames and reduce significantly the cost
-            // of each drawcall.
-            // In this case, for sinmplicity LitInput.hlsl is included. This contains the CBUFFER for the material
-            // properties defined above. As one can see this is not part of the ShaderLibrary, it specific to the
-            // LWRP Lit shader.
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+    // Material shader variables are not defined in SRP or LWRP shader library.
+    // This means _BaseColor, _BaseMap, _BaseMap_ST, and all variables in the Properties section of a shader
+    // must be defined by the shader itself. If you define all those properties in CBUFFER named
+    // UnityPerMaterial, SRP can cache the material properties between frames and reduce significantly the cost
+    // of each drawcall.
+    // In this case, for sinmplicity LitInput.hlsl is included. This contains the CBUFFER for the material
+    // properties defined above. As one can see this is not part of the ShaderLibrary, it specific to the
+    // LWRP Lit shader.
+    #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+
+            CBUFFER_START(UnityPerPixel)
+                float _Shades;
+            CBUFFER_END
 
             struct Attributes
             {
@@ -306,6 +311,7 @@ Shader "Custom/ToonShaderURP"
 
                 // Mix the pixel color with fogColor. You can optionaly use MixFogColor to override the fogColor
                 // with a custom one.
+
                 color = MixFog(color, fogFactor);
                 return half4(color, surfaceData.alpha);
             }

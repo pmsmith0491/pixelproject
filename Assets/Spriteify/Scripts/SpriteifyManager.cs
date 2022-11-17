@@ -4,31 +4,42 @@ using UnityEngine;
 
 public class SpriteifyManager : MonoBehaviour
 {
-
+    [SerializeField]
     List<Transform> spriteTargets;
-    
-    // Start is called before the first frame update
-    void Start()
+
+    private void Awake()
     {
-            
+        // need this to create render textures, i.e. every time the target transform changes  
+        var pixelTexture = createPixelTexture();
+
+
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         
     }
 
-    void addTransform(Transform target)
-    {
-        if(!spriteTargets.Contains(target))
-            spriteTargets.Add(target);
-    }
 
-    void removeTransform(Transform target)
+    private RenderTexture createPixelTexture()
     {
-        if(spriteTargets.Contains(target))
-            spriteTargets.Remove(target);
+
+        var result = new RenderTexture(Screen.width, Screen.height, 8);
+        Debug.Assert(result.Create(), "failed to create render texture for camera");
+
+
+        //  update the spritePositions and snap them to the pixel grid. 
+        foreach (Transform transform in spriteTargets)
+        {
+
+
+            // get the positions of the origin AT LEAST 
+            // for every spriteTarget, create a render texture, pixelate the render texture, combine the render textures
+
+
+
+        }
+        return result;
     }
 
 }

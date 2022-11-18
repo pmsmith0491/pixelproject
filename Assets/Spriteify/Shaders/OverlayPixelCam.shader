@@ -1,3 +1,4 @@
+// DEPRECATED 
 Shader "Custom/OverlayPixelCam"
 {
     // This shader draws a texture on the mesh.

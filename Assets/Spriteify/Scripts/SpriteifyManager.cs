@@ -1,3 +1,4 @@
+// COPYRIGHT 2022 Peter Smith
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,11 +25,10 @@ public class SpriteifyManager : MonoBehaviour
      */
 
 
-    [SerializeField]
-    List<GameObjectMaterialPair> spriteTargets; // (GameObject, Material) pairs where each GameObject is a pixelation target and the material
+    [SerializeField] private List<GameObjectMaterialPair> spriteTargets; // (GameObject, Material) pairs where each GameObject is a pixelation target and the material
                                                 // will contain the render texture of the temporary pixel cam looking at only the pixelated GameObject
-
-    public const int MAX_LAYERS = 31; // The largest layer index in Unity.
+    
+    private const int MAX_LAYERS = 31; // The largest layer index in Unity.
 
     // SimplePixelation.shader properties:
     // fields that should not change per object:    ResolutionX, ResolutionY.

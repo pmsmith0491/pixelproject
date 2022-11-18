@@ -10,7 +10,7 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Pixel
+  - 
   - Water
   - UI
   - 
@@ -37,8 +37,8 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
+  - Pixel
+  - Standby
   m_SortingLayers:
   - name: Default
     uniqueID: 0

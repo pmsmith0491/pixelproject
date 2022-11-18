@@ -49,7 +49,7 @@ public class SpriteifyManager : MonoBehaviour
         SetAllPairsToLayer("Standby");  // Put each GameObject inside of the Standby layer
         foreach (GameObjectMaterialPair pair in spriteTargets)
         {
-            pair.material = new Material(Shader.Find("Custom/SimplePixelation"));
+            pair.material = new Material(Shader.Find("Spriteify/SimplePixelation"));
             pair.material.SetFloat("_BoxSize", 8);
         }
         // ASSERT: Every Material in spriteTargets uses the simple pixelation shader 
@@ -196,31 +196,24 @@ public class SpriteifyManager : MonoBehaviour
     private RenderTexture CreatePixelTexture(Camera pixelCam)
     {
 
-        var result = new RenderTexture(Screen.width, Screen.height, 8);
-        Debug.Assert(result.Create(), "failed to create render texture for camera");
+        var result = new RenderTexture(Screen.width, Screen.height, 8); // contains ALL pixelated objects in a single texture
+        var pixelTex = new RenderTexture(Screen.width, Screen.height, 8);
+        pixelCam.targetTexture = pixelTex;
 
-
-        //  update the spritePositions and snap them to the pixel grid. 
         foreach (GameObjectMaterialPair pair in spriteTargets)
         {
+            //ASSERT: The pixel camera already has the pixelation blit being applied 
+
+            
             SetPairToLayer(pair, "Pixel");
-            // ASSERT: pair is in the Pixel layer
+            pair.material.SetTexture("_MainTex", pixelTex);
+            Graphics.Blit()
+            
+            // We have set each material to be pixelated, we need to retrieve these output textures.
+            
 
-            // for every spriteTarget, create a render texture, pixelate the render texture, combine the render textures
-            var tex = new RenderTexture(Screen.width, Screen.height, 8);
-            pixelCam.targetTexture = tex;
-            pair.material.SetTexture("_MainTex", tex);
+            //SetPairToLayer(pair, "Standby");
 
-            // create a new material with Overlay as its shader and set tex to its PixelTexture and result as its input 
-            //
-            //          Come up with a better plan for this.      
-            //          Since we have direct access to textures, we don't have to blit them. We just create a temporary material, give it two textures (tex and result) and return the combination of the two textures.
-            //
-            //          The overlay shader will handle the z depth of the textures. 
-
-
-            SetPairToLayer(pair, "Standby");
-            // ASSERT: pair is now in the Standby layer
         }
         return result;
     }

@@ -740,6 +740,42 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!84 &398981010
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 3
+  m_Width: 556
+  m_Height: 313
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthFormat: 1
+  m_ColorFormat: 8
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_UseDynamicScale: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
 --- !u!4 &467694388 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3278496332257226138, guid: df3cd4d35cf5d004cb561a662b9c3e8d, type: 3}
@@ -949,6 +985,36 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0297fd3f3d296ce4b90ce79e5f906952, type: 3}
+--- !u!21 &674063950
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Spriteify/SimplePixelation
+  m_Shader: {fileID: 4800000, guid: ec0fd472e8cbdbf43a039c1f039b1b3e, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _BoxSize: 8
+    - _ResolutionX: 1920
+    - _ResolutionY: 1080
+    m_Colors:
+    - _PixelationTargetPos: {r: 0, g: 0, b: 0, a: 0}
+  m_BuildTextureStacks: []
 --- !u!4 &696326014 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 107559833203193646, guid: 0297fd3f3d296ce4b90ce79e5f906952, type: 3}
@@ -1117,6 +1183,36 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 3927433580794531838, guid: df3cd4d35cf5d004cb561a662b9c3e8d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: df3cd4d35cf5d004cb561a662b9c3e8d, type: 3}
+--- !u!21 &743002323
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Spriteify/SimplePixelation
+  m_Shader: {fileID: 4800000, guid: ec0fd472e8cbdbf43a039c1f039b1b3e, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _BoxSize: 8
+    - _ResolutionX: 1920
+    - _ResolutionY: 1080
+    m_Colors:
+    - _PixelationTargetPos: {r: 0, g: 0, b: 0, a: 0}
+  m_BuildTextureStacks: []
 --- !u!4 &769315563 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3278496332257226138, guid: df3cd4d35cf5d004cb561a662b9c3e8d, type: 3}
@@ -1406,7 +1502,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 398981010}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -2203,7 +2299,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 2147483584
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
+  m_TargetTexture: {fileID: 398981010}
   m_TargetDisplay: 1
   m_TargetEye: 3
   m_HDR: 0
@@ -2404,36 +2500,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 107559833203193646, guid: 0297fd3f3d296ce4b90ce79e5f906952, type: 3}
   m_PrefabInstance: {fileID: 497325741}
   m_PrefabAsset: {fileID: 0}
---- !u!21 &1391453993
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Custom/SimplePixelation
-  m_Shader: {fileID: 4800000, guid: ec0fd472e8cbdbf43a039c1f039b1b3e, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _BoxSize: 8
-    - _ResolutionX: 1920
-    - _ResolutionY: 1080
-    m_Colors:
-    - _PixelationTargetPos: {r: 0, g: 0, b: 0, a: 0}
-  m_BuildTextureStacks: []
 --- !u!4 &1413216697 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3278496332257226138, guid: df3cd4d35cf5d004cb561a662b9c3e8d, type: 3}
@@ -2563,36 +2629,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0297fd3f3d296ce4b90ce79e5f906952, type: 3}
---- !u!21 &1520303862
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Custom/SimplePixelation
-  m_Shader: {fileID: 4800000, guid: ec0fd472e8cbdbf43a039c1f039b1b3e, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _BoxSize: 8
-    - _ResolutionX: 1920
-    - _ResolutionY: 1080
-    m_Colors:
-    - _PixelationTargetPos: {r: 0, g: 0, b: 0, a: 0}
-  m_BuildTextureStacks: []
 --- !u!1001 &1570960865
 PrefabInstance:
   m_ObjectHideFlags: 0

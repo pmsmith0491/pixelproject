@@ -110,6 +110,7 @@ Material:
     - USE_OBJECT_POSITION: 1
     - _AlphaClip: 0
     - _Blend: 0
+    - _BoxSize: 8
     - _BumpScale: 1
     - _ClearCoat: 0
     - _ClearCoatMask: 0
@@ -132,6 +133,8 @@ Material:
     - _PixelSize: 4
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _ResolutionX: 1920
+    - _ResolutionY: 1080
     - _RimAmount: 0.878
     - _RimThreshold: 0
     - _Shades: 3
@@ -161,6 +164,7 @@ Material:
     - _LookupColor: {r: 1, g: 1, b: 1, a: 1}
     - _OutlineColor: {r: 0.14150941, g: 0.14150941, b: 0.14150941, a: 0.7607843}
     - _PixelGridOrigin: {r: 0, g: 0, b: 0, a: 0}
+    - _PixelationTargetPos: {r: 0, g: 0, b: 0, a: 0}
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowTint: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 0.5}

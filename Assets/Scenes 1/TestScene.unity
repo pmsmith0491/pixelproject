@@ -471,11 +471,126 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0297fd3f3d296ce4b90ce79e5f906952, type: 3}
+--- !u!21 &92850164
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Custom/SimplePixelation
+  m_Shader: {fileID: 4800000, guid: ec0fd472e8cbdbf43a039c1f039b1b3e, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _BoxSize: 8
+    - _ResolutionX: 1920
+    - _ResolutionY: 1080
+    m_Colors:
+    - _PixelationTargetPos: {r: 0, g: 0, b: 0, a: 0}
+  m_BuildTextureStacks: []
 --- !u!4 &107366700 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3278496332257226138, guid: df3cd4d35cf5d004cb561a662b9c3e8d, type: 3}
   m_PrefabInstance: {fileID: 1271221601}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &113789958
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -7175437859444474754, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7175437859444474754, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: spriteTargets.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7175437859444474754, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: spriteTargets.Array.data[0].material
+      value: 
+      objectReference: {fileID: 92850164}
+    - target: {fileID: -7175437859444474754, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: spriteTargets.Array.data[1].material
+      value: 
+      objectReference: {fileID: 92850164}
+    - target: {fileID: -7175437859444474754, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: spriteTargets.Array.data[0].transform
+      value: 
+      objectReference: {fileID: 1831342375}
+    - target: {fileID: -7175437859444474754, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: spriteTargets.Array.data[0].gameObject
+      value: 
+      objectReference: {fileID: 1831342370}
+    - target: {fileID: -7175437859444474754, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: spriteTargets.Array.data[1].gameObject
+      value: 
+      objectReference: {fileID: 589902419}
+    - target: {fileID: 45441450714182097, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 45441450714182097, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 45441450714182097, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 45441450714182097, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 45441450714182097, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 45441450714182097, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 45441450714182097, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 45441450714182097, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 45441450714182097, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 45441450714182097, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 45441450714182097, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 609484015882071482, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: m_Name
+      value: SpriteifyManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
 --- !u!1001 &118735217
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -533,6 +648,36 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0297fd3f3d296ce4b90ce79e5f906952, type: 3}
+--- !u!21 &209262385
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Custom/SimplePixelation
+  m_Shader: {fileID: 4800000, guid: ec0fd472e8cbdbf43a039c1f039b1b3e, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _BoxSize: 8
+    - _ResolutionX: 1920
+    - _ResolutionY: 1080
+    m_Colors:
+    - _PixelationTargetPos: {r: 0, g: 0, b: 0, a: 0}
+  m_BuildTextureStacks: []
 --- !u!4 &224936594 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3278496332257226138, guid: df3cd4d35cf5d004cb561a662b9c3e8d, type: 3}
@@ -731,6 +876,41 @@ Transform:
 Transform:
   m_CorrespondingSourceObject: {fileID: 107559833203193646, guid: 0297fd3f3d296ce4b90ce79e5f906952, type: 3}
   m_PrefabInstance: {fileID: 781548945}
+  m_PrefabAsset: {fileID: 0}
+--- !u!21 &540436381
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Custom/SimplePixelation
+  m_Shader: {fileID: 4800000, guid: ec0fd472e8cbdbf43a039c1f039b1b3e, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _BoxSize: 8
+    - _ResolutionX: 1920
+    - _ResolutionY: 1080
+    m_Colors:
+    - _PixelationTargetPos: {r: 0, g: 0, b: 0, a: 0}
+  m_BuildTextureStacks: []
+--- !u!1 &589902419 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2752930446771533600, guid: df3cd4d35cf5d004cb561a662b9c3e8d, type: 3}
+  m_PrefabInstance: {fileID: 423751981553962783}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &594405491
 PrefabInstance:

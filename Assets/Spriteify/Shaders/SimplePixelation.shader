@@ -4,8 +4,8 @@ Shader "Custom/SimplePixelation"
     Properties
     {
         _MainTex("Base Map", 2D) = "white"
-        _ResolutionX("ResolutionX", float) = 512
-        _ResolutionY("ResolutionY", float) = 288
+        _ResolutionX("ResolutionX", float) = 1920
+        _ResolutionY("ResolutionY", float) = 1080
         _BoxSize("Box Size", float) = 8   // we want our box size to be ResolutionX / (AspectRatioX * AspectRatioY)
         _PixelationTargetPos("_PixelationTargetPos", Vector) = (0, 0, 0, 0)
     }

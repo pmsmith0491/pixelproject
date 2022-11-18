@@ -83,7 +83,7 @@ public class SpriteifyManager : MonoBehaviour
         //ASSERT: The pixelCam is initialized and within the scene. 
 
 
-        var pixelTexture = CreatePixelTexture(); // texture that is the same dimensions as the screen,
+        var pixelTexture = CreatePixelTexture(pixelCam); // texture that is the same dimensions as the screen,
                                                  // contains color and depth data of all pixels of objects that need to be pixelated 
 
         // create a render texture and set it as the camera's view. Then, set it as the CameraTexture of Overlay.shader 
@@ -169,6 +169,7 @@ public class SpriteifyManager : MonoBehaviour
         }
     }
 
+
     //PRE: This object satisfies the CI, layerName is a well defined string that is a name of an existing layer in the Unity Project
     //POST: spriteTargets.gameObject[i] where 0 <= i < spriteTargets.length are set to the layer with layerName
     private void SetAllPairsToLayer(string layerName)
@@ -192,7 +193,7 @@ public class SpriteifyManager : MonoBehaviour
 
     //PRE: This object satisfies the CI. The spriteTargets are not pixelated in the Viewport
     //POST: Returns a renderTexture where the spriteTargets are pixelated independent of other objects 
-    private RenderTexture CreatePixelTexture()
+    private RenderTexture CreatePixelTexture(Camera pixelCam)
     {
 
         var result = new RenderTexture(Screen.width, Screen.height, 8);
@@ -203,10 +204,23 @@ public class SpriteifyManager : MonoBehaviour
         foreach (GameObjectMaterialPair pair in spriteTargets)
         {
             SetPairToLayer(pair, "Pixel");
-             
+            // ASSERT: pair is in the Pixel layer
+
             // for every spriteTarget, create a render texture, pixelate the render texture, combine the render textures
-            
+            var tex = new RenderTexture(Screen.width, Screen.height, 8);
+            pixelCam.targetTexture = tex;
+            pair.material.SetTexture("_MainTex", tex);
+
+            // create a new material with Overlay as its shader and set tex to its PixelTexture and result as its input 
+            //
+            //          Come up with a better plan for this.      
+            //          Since we have direct access to textures, we don't have to blit them. We just create a temporary material, give it two textures (tex and result) and return the combination of the two textures.
+            //
+            //          The overlay shader will handle the z depth of the textures. 
+
+
             SetPairToLayer(pair, "Standby");
+            // ASSERT: pair is now in the Standby layer
         }
         return result;
     }

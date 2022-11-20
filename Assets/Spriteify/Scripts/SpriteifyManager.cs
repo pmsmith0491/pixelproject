@@ -199,6 +199,7 @@ public class SpriteifyManager : MonoBehaviour
         var result = new RenderTexture(Screen.width, Screen.height, 8); // contains ALL pixelated objects in a single texture
         var pixelTex = new RenderTexture(Screen.width, Screen.height, 8);
         pixelCam.targetTexture = pixelTex;
+        
 
         foreach (GameObjectMaterialPair pair in spriteTargets)
         {
@@ -206,9 +207,7 @@ public class SpriteifyManager : MonoBehaviour
 
             
             SetPairToLayer(pair, "Pixel");
-            pair.material.SetTexture("_MainTex", pixelTex);
-            Graphics.Blit()
-            
+            pair.material.SetTexture("_MainTex", pixelTex);            
             // We have set each material to be pixelated, we need to retrieve these output textures.
             
 

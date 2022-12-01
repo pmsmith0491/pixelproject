@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71616080c7e86c34faf297d31b4eda28, type: 3}
   m_Name: Pixelation
   m_EditorClassIdentifier: 
-  m_Active: 1
+  m_Active: 0
   settings:
     IsEnabled: 1
     WhenToInsert: 500

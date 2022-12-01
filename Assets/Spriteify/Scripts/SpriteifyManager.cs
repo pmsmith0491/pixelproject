@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Spriteify;
 
-[ExecuteAlways]
 public class SpriteifyManager : MonoBehaviour
 {
     /* Class Invariant: 
@@ -24,12 +23,8 @@ public class SpriteifyManager : MonoBehaviour
      *  
      */
 
-
    [SerializeField]
-    private List<GameObject> spriteTargets; // all objects that need to be pixelated 
-
-    [SerializeField]
-    private Material pixelMaterial;
+    private List<GameObjectMaterialPair> spriteTargets; // all objects that need to be pixelated 
 
     [SerializeField]
     private Material overlayMaterial;
@@ -53,56 +48,62 @@ public class SpriteifyManager : MonoBehaviour
     //      This object satisfies the CI. 
     private void Start()
     {
-        SetAllTargetsToLayer("Pixel");  // Put each GameObject inside of the Standby layer 
+        SetAllTargetsToLayer("Standby");  // Put each GameObject inside of the Standby layer 
+        foreach (GameObjectMaterialPair pair in spriteTargets)
+        {
+            pair.material = new Material(Shader.Find("Spriteify/SimplePixelation"));
+            pair.material.SetFloat("_BoxSize", 8);
+        }
     }
 
 
-    //PRE: This object satisfies the CI. The script instance has been loaded because the SpriteifyManager has become active.
-    //POST: The spriteTargets are pixelated in the Viewport 
+    //PRE: This object satisfies the CI. The current fixed-rate frame has updated 
+    //POST: The sprite targets are pixelated in the viewport of display 1 
+    private void FixedUpdate()
+    {
+       /* foreach (GameObjectMaterialPair pair in spriteTargets)
+        {
+            SetTargetPosInPixelPostProcess(Camera.main, pair);
+        }*/
+    }
+
+
+    //PRE: This object satisfies the CI. 
+    //POST: The sprite targets are pixelated in the viewport of display 1 
     private void Awake()
     {
-         
+        // For each pair, set the material's pixel origin to the origin of the GameObject.transform in
+        // normalized Viewport Space snapped to the Pixel Grid
+        // (this is why we need to use orthographic projection, this effect does not work with perspective due to the nature of perspective projections).
         Camera mainCam = Camera.main; // Main Camera 
-        
+
         CullLayerFromCam(mainCam, "Pixel");
         CullLayerFromCam(mainCam, "Standby");
         //ASSERT: Pixel and Standby layers are excluded from main camera's rendering
-        
+
         Camera pixelCam; // Duplicate of MainCamera but it has a transparent background and only renders the "Pixel" layer.
-        
+
         GameObject pixelCamGameObject = GameObject.FindGameObjectWithTag("PixelCamera");
 
         if (pixelCamGameObject == null)
         {
             //ASSERT: The scene does NOT contain a pixelCam. 
             pixelCam = CreatePixelCam();
-        } 
+        }
         else
         {
             pixelCam = pixelCamGameObject.GetComponent<Camera>();
         }
         //ASSERT: The pixelCam is initialized and within the scene. 
 
-
         var pixelTexture = CreatePixelTexture(pixelCam); // texture that is the same dimensions as the screen,
-                                                 // contains color and depth data of all pixels of objects that need to be pixelated 
+                                                         // contains color and depth data of all pixels of objects that need to be pixelated 
 
-        // create a render texture and set it as the camera's view. Then, set it as the CameraTexture of Overlay.shader 
-        //  then set pixelTexture as PixelTexture of Overlay.shader 
-        
-        // create the blit render passes here and programatically insert them into the render pipeline (making sure not to add duplicates).
+        overlayMaterial.SetTexture("_OverlayTex", pixelTexture);
+
+        pixelTexture.Release();
+        //ASSERT: We have given pixel texture to the overlay tex and no longer need to allocate the memory containing the texture
     }
-
-
-    //PRE: This object satisfies the CI. The current fixed-rate frame has updated 
-    //POST: The position of the spriteTarget[i].gameObject in Viewport space has been injected into spriteTarget[i].material where 0 <= i < spriteTargets.length 
-    private void FixedUpdate()
-    {
-        // For each pair, set the material's pixel origin to the origin of the GameObject.transform in
-        // normalized Viewport Space snapped to the Pixel Grid
-        // (this is why we need to use orthographic projection, this effect does not work with perspective due to the nature of perspective projections).
-    }
-
 
     /* 
      * 
@@ -127,6 +128,7 @@ public class SpriteifyManager : MonoBehaviour
         pixelCam.backgroundColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);
         pixelCam.targetDisplay = 1; // Camera outputs to display 2
         CullAllLayersFromMaskExcept(pixelCam, "Pixel");
+        pixelCam.transform.SetParent(Camera.main.transform);
         // ASSERT: pixelCam only renders the Pixel layer with a transparent black background 
         return (pixelCam);
     }
@@ -175,19 +177,63 @@ public class SpriteifyManager : MonoBehaviour
     //POST: spriteTargets.gameObject[i] where 0 <= i < spriteTargets.length are set to the layer with layerName
     private void SetAllTargetsToLayer(string layerName)
     {
-        foreach(GameObject target in spriteTargets)
+        foreach(GameObjectMaterialPair target in spriteTargets)
         {
-            SetGameObjectToLayer(target, layerName);
+            SetGameObjectToLayer(target.gameObject, layerName);
         }
     }
 
     
-    //PRE: This object satisfies the CI, layerName is a well defined string that is a name of an existing layer in the Unity Project
+    //PRE: layerName is a well defined string that is a name of an existing layer in the Unity Project
     //POST: spriteTargets.gameObject.layer is set to the layer with layerName
     private void SetGameObjectToLayer(GameObject target, string layerName)
     {
-        int layerNameAsInt = LayerMask.NameToLayer(layerName);
-        target.layer = layerNameAsInt;
+        SetChildrenToLayer(target, layerName);
+    }
+
+
+    //PRE: obj is a well defined GameObject. layerName is a well defined string.
+    //POST: obj and all children of obj are set to the layer "layerName". 
+    private void SetChildrenToLayer(GameObject obj, string layerName)
+    {
+        if(obj != null)
+        {  
+            int layerNameAsInt = LayerMask.NameToLayer(layerName);
+            obj.layer = layerNameAsInt;
+
+            foreach(Transform child in obj.transform)
+            {
+                if(child != null)
+                {
+                    SetChildrenToLayer(child.gameObject, layerName);
+                }
+            }
+        } 
+    }
+
+    //PRE: This object satisfies the CI. cam is a well defined Camera. pixelationTarget is a well defined GameObjectMaterialPair in spriteTargets 
+    //POST: pixelationTarget.material's _PixelationTargetPos field is populated with cam's ViewPort position of pixelationTarget snapped to the Pixel Grid 
+    private void SetTargetPosInPixelPostProcess(Camera cam, GameObjectMaterialPair pixelationTarget)
+    {
+        Vector3 viewportPosition = cam.WorldToViewportPoint(pixelationTarget.gameObject.transform.position);
+        SnapTargetToPixelGrid(viewportPosition, cam, pixelationTarget.gameObject);
+        Vector4 viewportPositionAsVec4 = new Vector4(viewportPosition.x, viewportPosition.y, viewportPosition.z, 0);
+        pixelationTarget.material.SetVector("_PixelationTargetPos", viewportPositionAsVec4);
+    }
+
+
+    //PRE: This object satisfies the CI.
+    //      targetViewportPos is a valid Vector3, cam is a valid Camera, and pixelationTarget is a valid GameObject 
+    //      In ViewPort space, the pixelationTarget's position is not necessarily inside of a specific pixel
+    //POST: pixelationTarget's position is snapped to a specific pixel in Viewport Space
+    private void SnapTargetToPixelGrid(Vector3 targetViewportPos, Camera cam, GameObject pixelationTarget)
+    {
+        float pixelSizeX = 1 / Screen.width; // the width of a pixel in the viewport 
+        float pixelSizeY = 1 / Screen.height; // the height of a pixel in the viewport 
+        float snappedPosX = Mathf.Floor(targetViewportPos.x * Screen.width) / Screen.width; // snap the pixelationTarget's x position to a specific pixel
+        float snappedPosY = Mathf.Floor(targetViewportPos.y * Screen.height) / Screen.height; // snap the pixelationTarget's y position to a specific pixel
+        Vector3 snappedPos = new Vector3(snappedPosX, snappedPosY, targetViewportPos.z);
+        pixelationTarget.transform.position = cam.ViewportToWorldPoint(snappedPos);
     }
 
 
@@ -195,13 +241,52 @@ public class SpriteifyManager : MonoBehaviour
     //POST: Returns a renderTexture where the spriteTargets are pixelated independent of other objects 
     private RenderTexture CreatePixelTexture(Camera pixelCam)
     {
-
         var result = new RenderTexture(Screen.width, Screen.height, 8); // contains ALL pixelated objects in a single texture
         var pixelTex = new RenderTexture(Screen.width, Screen.height, 8);
         pixelCam.targetTexture = pixelTex;
 
-        overlayMaterial.SetTexture("_OverlayTex", pixelTex);
+        foreach(GameObjectMaterialPair pair in spriteTargets) {
+            SetGameObjectToLayer(pair.gameObject, "Pixel");
 
-        return pixelTex;
+            Graphics.Blit(pixelTex, pixelTex, pair.material); // Copy pixelTex into MainTex of pair.material and copy the result back into pixelTex
+            pixelCam.targetTexture = null;
+            pixelCam.Render();
+            
+            Material overlayPixelAndResult = new Material(Shader.Find("Spriteify/OverlayTwoRenderTextures"));
+            overlayPixelAndResult.SetTexture("_OverlayTex", pixelTex);
+            Graphics.Blit(result, result, overlayPixelAndResult);
+            
+            SetGameObjectToLayer(pair.gameObject, "Standby");
+        }
+        pixelTex.Release();
+        // We no longer need the pixelTex
+
+        return result;
+        /* Each GameObjectMaterialPair has a material with the shader SimplePixelation
+         * 
+         * PROCEDURE: Create Pixel Texture
+         * 
+         * rendertexture result
+         * 
+         * For each pair in spriteTargets {
+         *      
+         *      pair.layer = "Pixel"
+         *      set all objects except pair to "Standby"
+         * 
+         *      Set pair.material.MainTex to pixelCam's texture
+         *      create temporary texture pixtex 
+         *      blit from pair.material to pixtex
+         *      
+         *      create temporary mat tempoverlay w/ shader "OverlayTwoTextures"
+         *      Set mainTex of tempoverlay to result and overlay tex to pixtex 
+         *      
+         *      blit from tempoverlay to result 
+         *      set pair to "Standby" 
+         * }
+         * 
+         * set OverlayMaterial's overlay tex to result
+         * set OverlayMaterial's mainTex to mainCam
+         * 
+         */
     }
 }

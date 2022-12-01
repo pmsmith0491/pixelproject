@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Spriteify;
 
-[ExecuteInEditMode]
+[ExecuteAlways]
 public class SpriteifyManager : MonoBehaviour
 {
     /* Class Invariant: 
@@ -16,7 +16,7 @@ public class SpriteifyManager : MonoBehaviour
      *  ---------------- 
      *  
      *  The MainCamera is using an Orthographic Projection. 
-     *  spriteTargets is a valid List of GameObjectMaterialPair objects (a tuple (x,y) where x is a GameObject and y is a Material)
+     *  spriteTargets is a valid List of GameObjects
      *  
      *  There exist layers with name "Pixel" and "Standby"
      *  
@@ -25,10 +25,17 @@ public class SpriteifyManager : MonoBehaviour
      */
 
 
-    [SerializeField] private List<GameObjectMaterialPair> spriteTargets; // (GameObject, Material) pairs where each GameObject is a pixelation target and the material
-                                                // will contain the render texture of the temporary pixel cam looking at only the pixelated GameObject
-    
+   [SerializeField]
+    private List<GameObject> spriteTargets; // all objects that need to be pixelated 
+
+    [SerializeField]
+    private Material pixelMaterial;
+
+    [SerializeField]
+    private Material overlayMaterial;
+
     private const int MAX_LAYERS = 31; // The largest layer index in Unity.
+
 
     // SimplePixelation.shader properties:
     // fields that should not change per object:    ResolutionX, ResolutionY.
@@ -46,13 +53,7 @@ public class SpriteifyManager : MonoBehaviour
     //      This object satisfies the CI. 
     private void Start()
     {
-        SetAllPairsToLayer("Standby");  // Put each GameObject inside of the Standby layer
-        foreach (GameObjectMaterialPair pair in spriteTargets)
-        {
-            pair.material = new Material(Shader.Find("Spriteify/SimplePixelation"));
-            pair.material.SetFloat("_BoxSize", 8);
-        }
-        // ASSERT: Every Material in spriteTargets uses the simple pixelation shader 
+        SetAllTargetsToLayer("Pixel");  // Put each GameObject inside of the Standby layer 
     }
 
 
@@ -172,22 +173,21 @@ public class SpriteifyManager : MonoBehaviour
 
     //PRE: This object satisfies the CI, layerName is a well defined string that is a name of an existing layer in the Unity Project
     //POST: spriteTargets.gameObject[i] where 0 <= i < spriteTargets.length are set to the layer with layerName
-    private void SetAllPairsToLayer(string layerName)
+    private void SetAllTargetsToLayer(string layerName)
     {
-        int layerNameAsInt = LayerMask.NameToLayer(layerName);
-        foreach(GameObjectMaterialPair pair in spriteTargets)
+        foreach(GameObject target in spriteTargets)
         {
-            pair.gameObject.layer = layerNameAsInt;
+            SetGameObjectToLayer(target, layerName);
         }
     }
 
     
     //PRE: This object satisfies the CI, layerName is a well defined string that is a name of an existing layer in the Unity Project
     //POST: spriteTargets.gameObject.layer is set to the layer with layerName
-    private void SetPairToLayer(GameObjectMaterialPair pair, string layerName)
+    private void SetGameObjectToLayer(GameObject target, string layerName)
     {
         int layerNameAsInt = LayerMask.NameToLayer(layerName);
-        pair.gameObject.layer = layerNameAsInt;
+        target.layer = layerNameAsInt;
     }
 
 
@@ -199,21 +199,9 @@ public class SpriteifyManager : MonoBehaviour
         var result = new RenderTexture(Screen.width, Screen.height, 8); // contains ALL pixelated objects in a single texture
         var pixelTex = new RenderTexture(Screen.width, Screen.height, 8);
         pixelCam.targetTexture = pixelTex;
-        
 
-        foreach (GameObjectMaterialPair pair in spriteTargets)
-        {
-            //ASSERT: The pixel camera already has the pixelation blit being applied 
+        overlayMaterial.SetTexture("_OverlayTex", pixelTex);
 
-            
-            SetPairToLayer(pair, "Pixel");
-            pair.material.SetTexture("_MainTex", pixelTex);            
-            // We have set each material to be pixelated, we need to retrieve these output textures.
-            
-
-            //SetPairToLayer(pair, "Standby");
-
-        }
-        return result;
+        return pixelTex;
     }
 }

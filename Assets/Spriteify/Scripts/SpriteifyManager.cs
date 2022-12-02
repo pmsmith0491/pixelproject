@@ -48,7 +48,7 @@ public class SpriteifyManager : MonoBehaviour
     //      This object satisfies the CI. 
     private void Start()
     {
-        SetAllTargetsToLayer("Standby");  // Put each GameObject inside of the Standby layer 
+        SetAllTargetsToLayer("Pixel");  // Put each GameObject inside of the Standby layer 
         foreach (GameObjectMaterialPair pair in spriteTargets)
         {
             pair.material = new Material(Shader.Find("Spriteify/SimplePixelation"));
@@ -245,7 +245,7 @@ public class SpriteifyManager : MonoBehaviour
         var pixelTex = new RenderTexture(Screen.width, Screen.height, 8);
         pixelCam.targetTexture = pixelTex;
 
-        foreach(GameObjectMaterialPair pair in spriteTargets) {
+        /*foreach(GameObjectMaterialPair pair in spriteTargets) {
             SetGameObjectToLayer(pair.gameObject, "Pixel");
 
             Graphics.Blit(pixelTex, pixelTex, pair.material); // Copy pixelTex into MainTex of pair.material and copy the result back into pixelTex
@@ -258,10 +258,10 @@ public class SpriteifyManager : MonoBehaviour
             
             SetGameObjectToLayer(pair.gameObject, "Standby");
         }
-        pixelTex.Release();
+        pixelTex.Release();*/
         // We no longer need the pixelTex
 
-        return result;
+        return pixelTex;
         /* Each GameObjectMaterialPair has a material with the shader SimplePixelation
          * 
          * PROCEDURE: Create Pixel Texture

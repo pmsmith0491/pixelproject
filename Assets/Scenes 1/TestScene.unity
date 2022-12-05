@@ -511,7 +511,7 @@ PrefabInstance:
     - target: {fileID: -7175437859444474754, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
       propertyPath: spriteTargets.Array.data[1]
       value: 
-      objectReference: {fileID: 307971091}
+      objectReference: {fileID: 589902419}
     - target: {fileID: -7175437859444474754, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
       propertyPath: spriteTargets.Array.data[2]
       value: 
@@ -737,11 +737,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0297fd3f3d296ce4b90ce79e5f906952, type: 3}
---- !u!1 &307971091 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2752930446771533600, guid: df3cd4d35cf5d004cb561a662b9c3e8d, type: 3}
-  m_PrefabInstance: {fileID: 2145020261}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &316732900
 GameObject:
   m_ObjectHideFlags: 0

@@ -86,7 +86,7 @@ Shader "Spriteify/SimplePixelation"
 
                 float2 offset = float2(originPosition.x - bottomLeftOfOriginCell.x, originPosition.y - bottomLeftOfOriginCell.y); // the difference between the bottom left pixel of the origin's cell and the origin
              
-                bottomLeftPixelOfCell = float2(bottomLeftPixelOfCellX + offset.x, bottomLeftPixelOfCellY + offset.y); // add the offset to pixelate relative to the pixelation target 
+             //   bottomLeftPixelOfCell = float2(bottomLeftPixelOfCellX + offset.x, bottomLeftPixelOfCellY + offset.y); // add the offset to pixelate relative to the pixelation target 
 
                 half4 color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, bottomLeftPixelOfCell);
 

@@ -5,7 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - PixelCamera
-  - CleanCamera
+  - PixelDepth
   layers:
   - Default
   - TransparentFX

@@ -37,6 +37,10 @@ public class SpriteifyManager : MonoBehaviour
     [SerializeField]
     private bool snapObjects = true;
 
+
+    RenderTexture pixelTexture;
+    RenderTexture pixelDepthTex;
+
     // SimplePixelation.shader properties:
     // fields that should not change per object:    ResolutionX, ResolutionY.
     // fields that can change per object:           _BoxSize, _PixelationTargetPos.
@@ -46,26 +50,6 @@ public class SpriteifyManager : MonoBehaviour
      *  UNITY MONO BEHAVIOR METHODS 
      * 
      */
-
-
-
-    //PRE: This object satisfies the CI. The current fixed-rate frame has updated 
-    //POST: The sprite targets are pixelated in the viewport of display 1 
-    private void FixedUpdate()
-    {
-       /* foreach (GameObjectMaterialPair pair in spriteTargets)
-        {
-            SetTargetPosInPixelPostProcess(Camera.main, pair);
-        }*/
-
-        //currentPixelationTarget.posit
-
-        // IDEA :
-        // Have a currentPixelationTarget that is null when there is no current pixelation target 
-
-
-    }
-
 
     //PRE: This object satisfies the CI. 
     //POST: a clone of main camera called "pixelCam" that only looks at objects in the pixel layer is added to the scene
@@ -82,26 +66,87 @@ public class SpriteifyManager : MonoBehaviour
         CullLayerFromCam(mainCam, "Standby");
         //ASSERT: Pixel and Standby layers are excluded from main camera's rendering
 
-        Camera pixelCam; // Duplicate of MainCamera but it has a transparent background and only renders the "Pixel" layer.
+        Camera pixelCam = CreateChildOfMainCam("PixelCamera", 1);
+        Camera pixelDepth = CreateChildOfMainCam("PixelDepth", 2);
 
-        GameObject pixelCamGameObject = GameObject.FindGameObjectWithTag("PixelCamera");
+        pixelTexture = new RenderTexture(Screen.width, Screen.height, 8);
+        pixelCam.targetTexture = pixelTexture;
 
-        if (pixelCamGameObject == null)
-        {
-            //ASSERT: The scene does NOT contain a pixelCam. 
-            pixelCam = InitializePixelCam();
-        }
-        else
-        {
-            pixelCam = pixelCamGameObject.GetComponent<Camera>();
-        }
-        //ASSERT: The pixelCam is initialized and within the scene. 
+        pixelDepthTex = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.Depth);
+        pixelDepth.targetTexture = pixelDepthTex;
 
-        RenderTexture pixelTexture = pixelCam.targetTexture;
+        mainCam.depthTextureMode = mainCam.depthTextureMode | DepthTextureMode.Depth;
 
         pixelMaterial.SetTexture("_MainTex", pixelTexture);
-
+        overlayMaterial.SetTexture("_OverlayDepth", pixelDepthTex);
         overlayMaterial.SetTexture("_OverlayTex", pixelTexture);
+
+        //ASSERT: The pixelCam is initialized and within the scene. 
+        //        The pixelDepth cam exists to create the render texture for the pixelCam
+
+    }
+
+
+    //PRE: This object satisfies the CI. The current fixed-rate frame has updated 
+    //POST: The sprite targets are pixelated in the viewport of display 1 
+    private void Update()
+
+    {
+        overlayMaterial.SetFloat("_ResolutionX", pixelMaterial.GetFloat("_ResolutionX"));
+        overlayMaterial.SetFloat("_ResolutionY", pixelMaterial.GetFloat("_ResolutionY"));
+        overlayMaterial.SetFloat("_BoxSize", pixelMaterial.GetFloat("_BoxSize"));
+        //Material newOverlay = new Material(Shader.Find("Spriteify/OverlayTwoRenderTextures"));
+
+        /*
+      foreach (GameObject target in spriteTargets) 
+        {
+            Debug.Log("Working on " + target.name);
+            var overlayMainTex = overlayMaterial.GetTexture("_MainTex");
+
+            SetGameObjectToLayer(target, "Pixel");
+
+            pixelCam.Render();
+                
+            if(snapObjects)
+            {
+              // SetTargetPosInPixelPostProcess(pixelCam, target);
+                // ASSERT: object's viewport position is snapped to the pixel grid  
+            }
+
+            /* 
+             *  Create material w/ overlay shader
+             *  
+             *  Make _MainTex the _MainTex of overlay 
+             *  Make OverlayTex the pixelTexture
+             *  
+             *  Blit from this new material to a texture 
+             *  
+             *  Set overlayMaterial._MainTex to the new texture 
+             * 
+             */
+
+        /*newOverlay.SetTexture("_MainTex", overlayMaterial.GetTexture("_MainTex"));
+        newOverlay.SetTexture("_OverlayTex", pixelTexture);
+
+        RenderTexture combinedTexture = new RenderTexture(Screen.width, Screen.height, 8);
+
+        Graphics.Blit(overlayMainTex, combinedTexture);
+        Graphics.Blit(combinedTexture, combinedTexture, newOverlay);
+
+        overlayMaterial.SetTexture("_MainTex", combinedTexture);
+        combinedTexture.Release();
+
+        SetGameObjectToLayer(target, "Standby");
+    }
+        pixelTexture.Release();*/
+        // We don't need to keep the render texture in memory now that we've passed it to our shaders 
+
+    }
+
+    private void OnDestroy()
+    {
+        pixelTexture.Release();
+        pixelDepthTex.Release();
     }
 
     /* 
@@ -110,26 +155,46 @@ public class SpriteifyManager : MonoBehaviour
      * 
      */
 
+    private Camera CreateChildOfMainCam(string tag, int display)
+    
+    {
+        Camera cam;
+        GameObject camGameObject = GameObject.FindGameObjectWithTag(tag);
+
+        if (camGameObject == null)
+        {
+            //ASSERT: The scene does NOT contain a pixelCam. 
+            cam = InitializeMainCamCopy(tag, display);
+        }
+        else
+        {
+            cam = camGameObject.GetComponent<Camera>();
+        }
+
+        return cam;
+    }
+
+
     //PRE: This object satisfies the CI. There does not exist a camera called PixelCam with tag "PixelCam"
     //POST: Scene contains a new camera called PixelCam with tag "PixelCam" such that:
     //      The camera is a copy of the main camera but culls everything except the pixel layer
     //      The camera clears to a solid color set to (0,0,0,0) (transparent black)
     //      The camera outputs to display 2
     // Note: This function could be retooled to be a "create camera" function, but in this instance there is no need. 
-    private Camera InitializePixelCam()
+    private Camera InitializeMainCamCopy(string tag, int display)
     {
-        GameObject pixelCamObject = new GameObject("PixelCamera");
-        pixelCamObject.AddComponent<Camera>();
-        Camera pixelCam = pixelCamObject.GetComponent<Camera>();
-        pixelCam.CopyFrom(Camera.main);
-        pixelCam.tag = "PixelCamera";
-        pixelCam.clearFlags = CameraClearFlags.SolidColor;
-        pixelCam.backgroundColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);
-        pixelCam.targetDisplay = 1; // Camera outputs to display 2
-        CullAllLayersFromMaskExcept(pixelCam, "Pixel");
-        pixelCam.transform.SetParent(Camera.main.transform);
+        GameObject camObject = new GameObject(tag);
+        camObject.AddComponent<Camera>();
+        Camera cam = camObject.GetComponent<Camera>();
+        cam.CopyFrom(Camera.main);
+        cam.tag = tag;
+        cam.clearFlags = CameraClearFlags.SolidColor;
+        cam.backgroundColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+        cam.targetDisplay = display; // Camera outputs to display 2
+        CullAllLayersFromMaskExcept(cam, "Pixel");
+        cam.transform.SetParent(Camera.main.transform);
         // ASSERT: pixelCam only renders the Pixel layer with a transparent black background 
-        return (pixelCam);
+        return (cam);
     }
 
 

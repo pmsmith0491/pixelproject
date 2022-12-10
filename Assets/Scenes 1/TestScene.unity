@@ -493,6 +493,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -7175437859444474754, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: snapObjects
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7175437859444474754, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
       propertyPath: pixelMaterial
       value: 
       objectReference: {fileID: 2100000, guid: 3d186d4e324ffd3498eb28053c75fdfe, type: 2}
@@ -500,6 +504,10 @@ PrefabInstance:
       propertyPath: overlayMaterial
       value: 
       objectReference: {fileID: 2100000, guid: 17620600161b08b44abd8ce8c63c167f, type: 2}
+    - target: {fileID: -7175437859444474754, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
+      propertyPath: pixelOverlayCreatorMat
+      value: 
+      objectReference: {fileID: 2100000, guid: f80fffc104d92034199bb5a018014269, type: 2}
     - target: {fileID: -7175437859444474754, guid: f1b3f8a876983d44d85a92c5222cd758, type: 3}
       propertyPath: spriteTargets.Array.size
       value: 5

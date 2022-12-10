@@ -6,7 +6,7 @@ TagManager:
   tags:
   - PixelCamera
   - PixelDepth
-  - MainCameraClone
+  - CreatePixelTexture
   layers:
   - Default
   - TransparentFX

@@ -32,16 +32,24 @@ public class SpriteifyManager : MonoBehaviour
     [SerializeField]
     private Material pixelMaterial;
 
+
+    [SerializeField]
+    private Material pixelOverlayCreatorMat;
+
+
+
     private const int MAX_LAYERS = 31; // The largest layer index in Unity.
 
     [SerializeField]
-    private bool snapObjects = true;
+    private bool snapObjects = false;
 
     Camera mainCam;
+    Camera createPixelTex;
     Camera pixelCam;
     Camera pixelDepth;
 
-    RenderTexture mainCamTex;
+    //RenderTexture mainCamTex;
+    RenderTexture pixelTexCreator;
     RenderTexture pixelTexture;
     RenderTexture pixelDepthTex;
     
@@ -66,21 +74,21 @@ public class SpriteifyManager : MonoBehaviour
 
         //ASSERT: Pixel and Standby layers are excluded from main camera's rendering
 
-        pixelCam = CreateChildOfMainCam("PixelCamera", 1);
-        pixelDepth = CreateChildOfMainCam("PixelDepth", 2);
-        
+        pixelCam = CreateChildOfMainCam("PixelCamera", 1); // overlay camera 
+        pixelDepth = CreateChildOfMainCam("PixelDepth", 2); // depth texture of overlay camera 
+        createPixelTex = CreateChildOfMainCam("CreatePixelTexture", 3);
 
         CullAllLayersFromMaskExcept(pixelCam, "Pixel");
         CullAllLayersFromMaskExcept(pixelDepth, "Pixel");
-        
-
+        CullAllLayersFromMaskExcept(pixelDepth, "Nothing");
 
         pixelTexture = new RenderTexture(Screen.width, Screen.height, 8);
         pixelDepthTex = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.Depth);
-        mainCamTex = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.Depth);
+        pixelTexCreator = new RenderTexture(Screen.width, Screen.height, 8);
 
         pixelCam.targetTexture = pixelTexture;
         pixelDepth.targetTexture = pixelDepthTex;
+        createPixelTex.targetTexture = pixelTexCreator;
         
         mainCam.depthTextureMode = mainCam.depthTextureMode | DepthTextureMode.Depth;
 
@@ -96,34 +104,40 @@ public class SpriteifyManager : MonoBehaviour
 
     //PRE: This object satisfies the CI. The current fixed-rate frame has updated 
     //POST: The sprite targets are pixelated in the viewport of display 1 
-    private void Update()
+    private void FixedUpdate()
 
     {
         overlayMaterial.SetFloat("_ResolutionX", pixelMaterial.GetFloat("_ResolutionX"));
         overlayMaterial.SetFloat("_ResolutionY", pixelMaterial.GetFloat("_ResolutionY"));
         overlayMaterial.SetFloat("_BoxSize", pixelMaterial.GetFloat("_BoxSize"));
 
-       /* mainCam.targetTexture = mainCamTex;
+        // after we make alterations to a camera, render it. 
 
-        foreach (GameObject target in spriteTargets)
+        /* What is our process? 
+         * We want to inject our render textures into overlayMaterial, render the main camera, and keep overlaying textures until all gameobjects are out of pixel layer
+         * 
+         */
+        if (snapObjects)
         {
-            SetGameObjectToLayer(target, "Pixel");
-            pixelCam.Render();
-            pixelDepth.Render();
-            
-
-
-            SetGameObjectToLayer(target, "Standby");
+            pixelOverlayCreatorMat.SetTexture("_BaseTex", pixelTexCreator);
+            pixelOverlayCreatorMat.SetTexture("_OverlayTex", pixelTexture);
+            foreach (GameObject target in spriteTargets)
+            {
+                //SetTargetPosInPixelPostProcess(pixelCam, target);
+                SetGameObjectToLayer(target, "Pixel");
+                pixelCam.Render();
+                createPixelTex.Render();
+                SetGameObjectToLayer(target, "Standby");
+            }
+            overlayMaterial.SetTexture("_OverlayTex", pixelTexCreator);
         }
-        overlayMaterial.SetTexture("_MainTex", mainCamTex)
-        mainCam.targetTexture = null;*/
     }
 
     private void OnDestroy()
     {
         pixelTexture.Release();
         pixelDepthTex.Release();
-        mainCamTex.Release();
+        pixelTexCreator.Release();
     }
 
     /* 

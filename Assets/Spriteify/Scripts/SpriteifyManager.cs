@@ -37,13 +37,14 @@ public class SpriteifyManager : MonoBehaviour
     [SerializeField]
     private bool snapObjects = true;
 
+    Camera mainCam;
+    Camera pixelCam;
+    Camera pixelDepth;
 
+    RenderTexture mainCamTex;
     RenderTexture pixelTexture;
     RenderTexture pixelDepthTex;
-
-    // SimplePixelation.shader properties:
-    // fields that should not change per object:    ResolutionX, ResolutionY.
-    // fields that can change per object:           _BoxSize, _PixelationTargetPos.
+    
 
     /*
      * 
@@ -58,23 +59,29 @@ public class SpriteifyManager : MonoBehaviour
     private void Awake()
     {
         SetAllTargetsToLayer("Pixel");  // Put each GameObject inside of the Standby layer 
-        // For each pair, set the material's pixel origin to the origin of the GameObject.transform in
-        // normalized Viewport Space snapped to the Pixel Grid
-        // (this is why we need to use orthographic projection, this effect does not work with perspective due to the nature of perspective projections).
-        Camera mainCam = Camera.main; // Main Camera 
+
+        mainCam = Camera.main; // Main Camera 
         CullLayerFromCam(mainCam, "Pixel");
         CullLayerFromCam(mainCam, "Standby");
+
         //ASSERT: Pixel and Standby layers are excluded from main camera's rendering
 
-        Camera pixelCam = CreateChildOfMainCam("PixelCamera", 1);
-        Camera pixelDepth = CreateChildOfMainCam("PixelDepth", 2);
+        pixelCam = CreateChildOfMainCam("PixelCamera", 1);
+        pixelDepth = CreateChildOfMainCam("PixelDepth", 2);
+        
+
+        CullAllLayersFromMaskExcept(pixelCam, "Pixel");
+        CullAllLayersFromMaskExcept(pixelDepth, "Pixel");
+        
+
 
         pixelTexture = new RenderTexture(Screen.width, Screen.height, 8);
-        pixelCam.targetTexture = pixelTexture;
-
         pixelDepthTex = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.Depth);
-        pixelDepth.targetTexture = pixelDepthTex;
+        mainCamTex = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.Depth);
 
+        pixelCam.targetTexture = pixelTexture;
+        pixelDepth.targetTexture = pixelDepthTex;
+        
         mainCam.depthTextureMode = mainCam.depthTextureMode | DepthTextureMode.Depth;
 
         pixelMaterial.SetTexture("_MainTex", pixelTexture);
@@ -95,58 +102,28 @@ public class SpriteifyManager : MonoBehaviour
         overlayMaterial.SetFloat("_ResolutionX", pixelMaterial.GetFloat("_ResolutionX"));
         overlayMaterial.SetFloat("_ResolutionY", pixelMaterial.GetFloat("_ResolutionY"));
         overlayMaterial.SetFloat("_BoxSize", pixelMaterial.GetFloat("_BoxSize"));
-        //Material newOverlay = new Material(Shader.Find("Spriteify/OverlayTwoRenderTextures"));
 
-        /*
-      foreach (GameObject target in spriteTargets) 
+       /* mainCam.targetTexture = mainCamTex;
+
+        foreach (GameObject target in spriteTargets)
         {
-            Debug.Log("Working on " + target.name);
-            var overlayMainTex = overlayMaterial.GetTexture("_MainTex");
-
             SetGameObjectToLayer(target, "Pixel");
-
             pixelCam.Render();
-                
-            if(snapObjects)
-            {
-              // SetTargetPosInPixelPostProcess(pixelCam, target);
-                // ASSERT: object's viewport position is snapped to the pixel grid  
-            }
+            pixelDepth.Render();
+            
 
-            /* 
-             *  Create material w/ overlay shader
-             *  
-             *  Make _MainTex the _MainTex of overlay 
-             *  Make OverlayTex the pixelTexture
-             *  
-             *  Blit from this new material to a texture 
-             *  
-             *  Set overlayMaterial._MainTex to the new texture 
-             * 
-             */
 
-        /*newOverlay.SetTexture("_MainTex", overlayMaterial.GetTexture("_MainTex"));
-        newOverlay.SetTexture("_OverlayTex", pixelTexture);
-
-        RenderTexture combinedTexture = new RenderTexture(Screen.width, Screen.height, 8);
-
-        Graphics.Blit(overlayMainTex, combinedTexture);
-        Graphics.Blit(combinedTexture, combinedTexture, newOverlay);
-
-        overlayMaterial.SetTexture("_MainTex", combinedTexture);
-        combinedTexture.Release();
-
-        SetGameObjectToLayer(target, "Standby");
-    }
-        pixelTexture.Release();*/
-        // We don't need to keep the render texture in memory now that we've passed it to our shaders 
-
+            SetGameObjectToLayer(target, "Standby");
+        }
+        overlayMaterial.SetTexture("_MainTex", mainCamTex)
+        mainCam.targetTexture = null;*/
     }
 
     private void OnDestroy()
     {
         pixelTexture.Release();
         pixelDepthTex.Release();
+        mainCamTex.Release();
     }
 
     /* 
@@ -186,12 +163,12 @@ public class SpriteifyManager : MonoBehaviour
         GameObject camObject = new GameObject(tag);
         camObject.AddComponent<Camera>();
         Camera cam = camObject.GetComponent<Camera>();
+        
         cam.CopyFrom(Camera.main);
         cam.tag = tag;
         cam.clearFlags = CameraClearFlags.SolidColor;
         cam.backgroundColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);
         cam.targetDisplay = display; // Camera outputs to display 2
-        CullAllLayersFromMaskExcept(cam, "Pixel");
         cam.transform.SetParent(Camera.main.transform);
         // ASSERT: pixelCam only renders the Pixel layer with a transparent black background 
         return (cam);

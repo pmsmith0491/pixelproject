@@ -12,7 +12,6 @@ public class CameraController : MonoBehaviour
 
     private void FixedUpdate()
     {
-
         Vector3 desiredPosition = target.position + offset; // desired camera position relative to the player 
         Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed); // smoothed/linearly interpolated version of desiredPosition 
                                                                                                    // Lerp stands for linear interpolation 

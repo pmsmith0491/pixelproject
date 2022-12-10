@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
+
 public class BlitRenderPass : ScriptableRenderPass
 {
     // used to label this pass in Unity's Frame Debug utility

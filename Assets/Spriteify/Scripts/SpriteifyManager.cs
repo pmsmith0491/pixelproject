@@ -23,25 +23,25 @@ public class SpriteifyManager : MonoBehaviour
      *  
      */
 
-   [SerializeField]
-    private List<GameObject> spriteTargets; // all objects that need to be pixelated 
+    /* CONSTANTS */
+    private const int MAX_LAYERS = 31; // The largest layer index in Unity.
+    private const int DEFAULT_BOX_SIZE = 8; // The largest layer index in Unity.
 
+
+    /*Inspector Fields*/
+    [SerializeField]
+    private List<GameObject> spriteTargets; // all objects that need to be pixelated 
+    [SerializeField]
+    private List<float> targetBoxSize;
     [SerializeField]
     private Material overlayMaterial;
-
     [SerializeField]
     private Material pixelMaterial;
-
-
     [SerializeField]
     private Material pixelOverlayCreatorMat;
-
-
-
-    private const int MAX_LAYERS = 31; // The largest layer index in Unity.
-
     [SerializeField]
     private bool snapObjects = false;
+
 
     Camera mainCam;
     Camera createPixelTex;
@@ -65,6 +65,12 @@ public class SpriteifyManager : MonoBehaviour
     //      overlayMaterial._OverlayTex is pixelCamera.targetTexture
     private void Awake()
     {
+        foreach(GameObject target in spriteTargets)
+        {
+            targetBoxSize.Add(DEFAULT_BOX_SIZE);
+        }
+        // ASSERT: each object will pixelate with DEFAULT_BOX_SIZE
+
         SetAllTargetsToLayer("Pixel");  // Put each GameObject inside of the Standby layer 
 
         mainCam = Camera.main; // Main Camera 
@@ -110,8 +116,6 @@ public class SpriteifyManager : MonoBehaviour
         overlayMaterial.SetFloat("_ResolutionY", pixelMaterial.GetFloat("_ResolutionY"));
         overlayMaterial.SetFloat("_BoxSize", pixelMaterial.GetFloat("_BoxSize"));
 
-        // after we make alterations to a camera, render it. 
-
         /* What is our process? 
          * We want to inject our render textures into overlayMaterial, render the main camera, and keep overlaying textures until all gameobjects are out of pixel layer
          * 
@@ -126,11 +130,14 @@ public class SpriteifyManager : MonoBehaviour
             createPixelTex.targetTexture = pixelTexCreator;
             pixelOverlayCreatorMat.SetTexture("_BaseTex", pixelTexCreator);
             pixelOverlayCreatorMat.SetTexture("_OverlayTex", pixelTexture);
+            // ASSERT: createPixelTex cam has been cleared 
             foreach (GameObject target in spriteTargets)
             {
                 SetGameObjectToLayer(target, "Pixel");
+                pixelMaterial.SetFloat("_BoxSize", targetBoxSize[spriteTargets.IndexOf(target)]);
                 SetTargetPosInPixelPostProcess(createPixelTex, target);
                 pixelCam.Render();
+                pixelDepth.Render();
                 createPixelTex.Render();
                 SetGameObjectToLayer(target, "Standby");
             }
@@ -276,7 +283,7 @@ public class SpriteifyManager : MonoBehaviour
     private void SetTargetPosInPixelPostProcess(Camera cam, GameObject pixelationTarget)
     {
         Vector3 viewportPosition = cam.WorldToViewportPoint(pixelationTarget.transform.position);
-        SnapTargetToPixelGrid(viewportPosition, cam, pixelationTarget);
+     //   SnapTargetToPixelGrid(viewportPosition, cam, pixelationTarget);
         viewportPosition = cam.WorldToViewportPoint(pixelationTarget.transform.position);
         Vector4 viewportPositionAsVec4 = new Vector4(viewportPosition.x, viewportPosition.y, viewportPosition.z, 0);
         pixelMaterial.SetVector("_PixelationTargetPos", viewportPositionAsVec4);

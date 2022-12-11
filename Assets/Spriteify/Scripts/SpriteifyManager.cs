@@ -52,7 +52,6 @@ public class SpriteifyManager : MonoBehaviour
     RenderTexture pixelTexCreator;
     RenderTexture pixelTexture;
     RenderTexture pixelDepthTex;
-    
 
     /*
      * 
@@ -119,12 +118,18 @@ public class SpriteifyManager : MonoBehaviour
          */
         if (snapObjects)
         {
+            pixelMaterial.SetVector("_PixelTargetPos", new Vector4(0, 0, 0, 0));
+            pixelTexCreator.Release();
+            createPixelTex.targetTexture = null;
+            createPixelTex.Render();
+            pixelTexCreator = new RenderTexture(Screen.width, Screen.height, 8);
+            createPixelTex.targetTexture = pixelTexCreator;
             pixelOverlayCreatorMat.SetTexture("_BaseTex", pixelTexCreator);
             pixelOverlayCreatorMat.SetTexture("_OverlayTex", pixelTexture);
             foreach (GameObject target in spriteTargets)
             {
-                //SetTargetPosInPixelPostProcess(pixelCam, target);
                 SetGameObjectToLayer(target, "Pixel");
+                SetTargetPosInPixelPostProcess(createPixelTex, target);
                 pixelCam.Render();
                 createPixelTex.Render();
                 SetGameObjectToLayer(target, "Standby");
@@ -272,6 +277,7 @@ public class SpriteifyManager : MonoBehaviour
     {
         Vector3 viewportPosition = cam.WorldToViewportPoint(pixelationTarget.transform.position);
         SnapTargetToPixelGrid(viewportPosition, cam, pixelationTarget);
+        viewportPosition = cam.WorldToViewportPoint(pixelationTarget.transform.position);
         Vector4 viewportPositionAsVec4 = new Vector4(viewportPosition.x, viewportPosition.y, viewportPosition.z, 0);
         pixelMaterial.SetVector("_PixelationTargetPos", viewportPositionAsVec4);
     }
@@ -283,10 +289,18 @@ public class SpriteifyManager : MonoBehaviour
     //POST: pixelationTarget's position is snapped to a specific pixel in Viewport Space
     private void SnapTargetToPixelGrid(Vector3 targetViewportPos, Camera cam, GameObject pixelationTarget)
     {
-        float snappedPosX = Mathf.Floor(targetViewportPos.x * Screen.width) / Screen.width; // snap the pixelationTarget's x position to a specific pixel
-        float snappedPosY = Mathf.Floor(targetViewportPos.y * Screen.height) / Screen.height; // snap the pixelationTarget's y position to a specific pixel
+        float snappedPosX = Mathf.Floor(targetViewportPos.x * cam.pixelWidth) / cam.pixelWidth;
+        float snappedPosY = Mathf.Floor(targetViewportPos.y * cam.pixelHeight) / cam.pixelHeight;
         Vector3 snappedPos = new Vector3(snappedPosX, snappedPosY, targetViewportPos.z);
         pixelationTarget.transform.position = cam.ViewportToWorldPoint(snappedPos);
+
+        Debug.Log("Game object: " + pixelationTarget.name);
+        Debug.Log("Original position (" + targetViewportPos.x + ", " +targetViewportPos.y + ")");
+        Debug.Log("New position (" + snappedPosX + ", " + snappedPosY + ")");
+        Debug.Log("Cam pixel width" + cam.pixelWidth);
+        Debug.Log("Cam pixel height" + cam.pixelHeight);
+
+
     }
 
 

@@ -122,6 +122,6 @@ Material:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _PixelationTargetPos: {r: 1.4152651, g: -0.5341623, b: 1.7696639, a: 0}
+    - _PixelationTargetPos: {r: 0.058666676, g: -0.09479178, b: 1.4414135, a: 0}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   m_BuildTextureStacks: []
